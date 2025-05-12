@@ -3,36 +3,38 @@ import java.util.*;
 
 public class run {
 
+    public static final String CHECK_IN = "check-in";
+    public static final String CHECK_OUT = "check-out";
+    public static final int INDEX_ZERO = 0;
+    public static final int INDEX_ONE = 1;
+
     public static boolean checkCapacity(int maxCapacity, List<Map<String, String>> guests) {
         List<String[]> events = new ArrayList<>();
 
         for (Map<String, String> guest : guests) {
-            String checkIn = guest.get("check-in");
-            String checkOut = guest.get("check-out");
-            events.add(new String[]{checkIn, "check-in"});
-            events.add(new String[]{checkOut, "check-out"});
+            events.add(new String[]{guest.get(CHECK_IN), CHECK_IN});
+            events.add(new String[]{guest.get(CHECK_OUT), CHECK_OUT});
         }
 
         List<String[]> sortedEvents = events.stream()
-                .sorted(Comparator.comparing((String[] event) -> event[0])
-                        .thenComparing(event -> event[1].equals("check-in") ? 1 : 0))
+                .sorted(Comparator.comparing((String[] event) -> event[INDEX_ZERO])
+                        .thenComparing(event -> event[INDEX_ONE].equals(CHECK_IN) ? 1 : 0))
                 .toList();
 
-        int currentGuests = 0;
+        int currentGuestCount = 0;
         for (String[] event : sortedEvents) {
-            if (event[1].equals("check-in")) {
-                currentGuests++;
+            if (event[INDEX_ONE].equals(CHECK_IN)) {
+                currentGuestCount++;
             } else {
-                currentGuests--;
+                currentGuestCount--;
             }
-            if (currentGuests > maxCapacity) {
+            if (currentGuestCount > maxCapacity) {
                 return false;
             }
         }
 
         return true;
     }
-
 
     private static Map<String, String> parseJsonToMap(String json) {
         Map<String, String> map = new HashMap<>();
